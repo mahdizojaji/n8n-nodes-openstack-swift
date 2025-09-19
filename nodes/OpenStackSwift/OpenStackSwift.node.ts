@@ -4,8 +4,10 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	INodeProperties,
-	NodeConnectionType
+	NodeOperationError,
+	NodeConnectionType,
 } from 'n8n-workflow';
+
 import { createContainerOperation } from './operations/createContainer.operation';
 import { listContainersOperation } from './operations/listContainers.operation';
 
@@ -14,7 +16,12 @@ interface OperationDefinition {
 	displayName: string;
 	action: string;
 	properties: INodeProperties[];
-	execute(this: IExecuteFunctions, token: string, storageUrl: string, index: number): Promise<any>;
+	execute(
+		this: IExecuteFunctions,
+		token: string,
+		storageUrl: string,
+		index: number,
+	): Promise<any>;
 }
 
 const operations: OperationDefinition[] = [
@@ -29,6 +36,7 @@ export class OpenStackSwift implements INodeType {
 		group: ['transform'],
 		version: 1,
 		description: 'Interact with OpenStack Swift',
+		subtitle: '={{ $parameter["operation"] }}', // ✅ fix subtitle lint
 		defaults: { name: 'OpenStack Swift' },
 		inputs: ['main'] as NodeConnectionType[],
 		outputs: ['main'] as NodeConnectionType[],
@@ -39,26 +47,30 @@ export class OpenStackSwift implements INodeType {
 				name: 'operation',
 				type: 'options' as const,
 				noDataExpression: true,
-				options: operations.map(op => ({
+				options: operations.map((op) => ({
 					name: op.displayName,
 					value: op.name,
 					action: op.action,
 				})),
 				default: operations[0].name,
 			},
-			...operations.flatMap(op => op.properties || []),
+			...operations.flatMap((op) => op.properties || []),
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const credentials = await this.getCredentials('openStackSwiftApi') as {
+		const credentials = (await this.getCredentials('openStackSwiftApi')) as {
 			authToken?: string;
 			storageUrl?: string;
 		};
 
 		const { authToken, storageUrl } = credentials;
+
 		if (!authToken || !storageUrl) {
-			throw new Error('Missing OpenStack Swift credentials (authToken or storageUrl)');
+			throw new NodeOperationError(
+				this.getNode(),
+				'Missing OpenStack Swift credentials (authToken or storageUrl)',
+			);
 		}
 
 		const items = this.getInputData();
@@ -66,13 +78,22 @@ export class OpenStackSwift implements INodeType {
 
 		for (let i = 0; i < items.length; i++) {
 			const operationName = this.getNodeParameter('operation', i) as string;
-			const operation = operations.find(op => op.name === operationName);
+			const operation = operations.find((op) => op.name === operationName);
 
 			if (!operation) {
-				throw new Error(`Operation "${operationName}" not found`);
+				throw new NodeOperationError(
+					this.getNode(),
+					`Operation "${operationName}" not found`,
+				);
 			}
 
-			const result = await operation.execute.call(this, authToken, storageUrl, i);
+			const result = await operation.execute.call(
+				this,
+				authToken,
+				storageUrl,
+				i,
+			);
+
 			returnData.push({ json: result });
 		}
 
