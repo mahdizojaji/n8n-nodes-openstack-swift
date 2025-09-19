@@ -13,7 +13,10 @@ export class ListContainersOperation extends SwiftOperation {
 		const response = await this.helpers.httpRequest({
 			method: 'GET',
 			url: storageUrl,
-			headers: { 'X-Auth-Token': token },
+			headers: {
+				'X-Auth-Token': token,
+				"Accept": "application/json",
+			},
 			ignoreHttpStatusErrors: false,
 		});
 

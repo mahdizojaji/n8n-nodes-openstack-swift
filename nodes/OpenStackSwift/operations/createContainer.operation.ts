@@ -2,7 +2,6 @@ import { IExecuteFunctions, INodeProperties, NodeOperationError } from 'n8n-work
 import { SwiftOperation } from './swift.operation.base';
 import { OperationRegistry } from './swift.operation.registry';
 
-
 export class CreateContainerOperation extends SwiftOperation {
 	name = 'createContainer';
 	displayName = 'Create Container';
@@ -35,11 +34,36 @@ export class CreateContainerOperation extends SwiftOperation {
 		const response = await this.helpers.httpRequest({
 			method: 'PUT',
 			url,
-			headers: { 'X-Auth-Token': token },
+			headers: {
+				'X-Auth-Token': token,
+				'Accept': 'application/json',
+			},
 			ignoreHttpStatusErrors: false,
+			returnFullResponse: true,
 		});
 
-		return { success: true, container: containerName, response };
+		let bodyAsJson: any = null;
+		try {
+			if (typeof response.body === 'string' && response.headers['content-type']?.includes('application/json')) {
+				bodyAsJson = JSON.parse(response.body);
+			} else if (typeof response.body === 'object') {
+				bodyAsJson = response.body;
+			}
+		} catch (e) {
+		}
+
+		const statusCode = response.statusCode || response.status?.code;
+		const success = statusCode === 201;
+
+		return {
+			success: success,
+			statusCode: statusCode,
+			container: containerName,
+			requestId: response.headers['x-openstack-request-id'] || null,
+			transactionId: response.headers['x-trans-id'] || null,
+			response: response.body,
+			responseJson: bodyAsJson,
+		};
 	}
 }
 
