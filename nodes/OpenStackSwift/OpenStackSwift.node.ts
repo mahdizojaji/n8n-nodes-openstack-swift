@@ -33,6 +33,7 @@ export class OpenStackSwift implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'OpenStack Swift',
 		name: 'openStackSwift',
+		icon: "file:swift.svg",
 		group: ['transform'],
 		version: 1,
 		description: 'Interact with OpenStack Swift',
