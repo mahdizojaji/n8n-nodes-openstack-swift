@@ -1,0 +1,51 @@
+{
+  "name": "n8n-nodes-openstack-swift",
+  "version": "0.1.22",
+  "description": "OpenStack Swift API for n8n",
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "author": {
+    "name": "Mahdi Zojaji",
+    "email": "mmahdizojajim@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://opengit.ir/mohammadzojaji/n8n-nodes-openstack-swift"
+  },
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/OpenStackSwiftApi.credentials"
+    ],
+    "nodes": [
+      "dist/nodes/OpenStackSwift/OpenStackSwift.node"
+    ]
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/request-promise-native": "^1.0.21",
+    "@typescript-eslint/parser": "^8.44.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "gulp": "^5.0.1",
+    "n8n-core": "^1.14.1",
+    "n8n-workflow": "^1.82.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
+  }
+}

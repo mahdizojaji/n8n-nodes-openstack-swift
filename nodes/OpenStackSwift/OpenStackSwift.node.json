@@ -1,0 +1,53 @@
+{
+  "displayName": "OpenStack Swift",
+  "name": "openStackSwift",
+  "icon": "file:swift.svg",
+  "group": ["output"],
+  "version": 1,
+  "subtitle": "Interact with OpenStack Swift",
+  "description": "Perform operations on OpenStack Swift storage",
+  "defaults": {
+    "name": "OpenStack Swift"
+  },
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "credentials": [
+    {
+      "name": "openStackSwiftApi",
+      "required": true
+    }
+  ],
+  "properties": [
+    {
+      "displayName": "Operation",
+      "name": "operation",
+      "type": "options",
+      "options": [
+        {
+          "name": "List Containers",
+          "value": "listContainers",
+          "description": "List all containers in Swift storage"
+        },
+        {
+          "name": "Create Container",
+          "value": "createContainer",
+          "description": "Create a new container in Swift storage"
+        }
+      ],
+      "default": "listContainers",
+      "description": "The operation to perform."
+    },
+    {
+      "displayName": "Container Name",
+      "name": "containerName",
+      "type": "string",
+      "default": "",
+      "displayOptions": {
+        "show": {
+          "operation": ["createContainer"]
+        }
+      },
+      "description": "Name of the container to create"
+    }
+  ]
+}
