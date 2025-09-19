@@ -3,22 +3,32 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeOperationError,
-	NodeConnectionType,
+	INodeProperties,
+	NodeConnectionType
 } from 'n8n-workflow';
+import { createContainerOperation } from './operations/createContainer.operation';
+import { listContainersOperation } from './operations/listContainers.operation';
 
-import { listContainers } from './operations/listContainers';
-import { createContainer } from './operations/createContainer';
+interface OperationDefinition {
+	name: string;
+	displayName: string;
+	action: string;
+	properties: INodeProperties[];
+	execute(this: IExecuteFunctions, token: string, storageUrl: string, index: number): Promise<any>;
+}
+
+const operations: OperationDefinition[] = [
+	listContainersOperation,
+	createContainerOperation,
+];
 
 export class OpenStackSwift implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'OpenStack Swift',
 		name: 'openStackSwift',
-		icon: 'file:swift.svg',
-		group: ['output'],
+		group: ['transform'],
 		version: 1,
-		subtitle: 'Interact with OpenStack Swift',
-		description: 'Perform operations on OpenStack Swift storage',
+		description: 'Interact with OpenStack Swift',
 		defaults: { name: 'OpenStack Swift' },
 		inputs: ['main'] as NodeConnectionType[],
 		outputs: ['main'] as NodeConnectionType[],
@@ -27,52 +37,43 @@ export class OpenStackSwift implements INodeType {
 			{
 				displayName: 'Operation',
 				name: 'operation',
-				type: 'options',
+				type: 'options' as const,
 				noDataExpression: true,
-				options: [
-					{ name: 'List Containers', value: 'listContainers', action: 'List all containers' },
-					{ name: 'Create Container', value: 'createContainer', action: 'Create a new container' },
-				],
-				default: 'listContainers',
+				options: operations.map(op => ({
+					name: op.displayName,
+					value: op.name,
+					action: op.action,
+				})),
+				default: operations[0].name,
 			},
-			{
-				displayName: 'Container Name',
-				name: 'containerName',
-				type: 'string',
-				default: '',
-				displayOptions: { show: { operation: ['createContainer'] } },
-			},
+			...operations.flatMap(op => op.properties || []),
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+		const credentials = await this.getCredentials('openStackSwiftApi') as {
+			authToken?: string;
+			storageUrl?: string;
+		};
+
+		const { authToken, storageUrl } = credentials;
+		if (!authToken || !storageUrl) {
+			throw new Error('Missing OpenStack Swift credentials (authToken or storageUrl)');
+		}
+
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
 
-		const { authToken, storageUrl } = await this.getCredentials('openStackSwiftApi') as {
-			authToken: string;
-			storageUrl: string;
-		};
-
-		if (!authToken || !storageUrl) {
-			throw new NodeOperationError(this.getNode(), 'Auth Token and Storage URL are required.');
-		}
-
 		for (let i = 0; i < items.length; i++) {
-			try {
-				const operation = this.getNodeParameter('operation', i) as string;
-				let result: any;
+			const operationName = this.getNodeParameter('operation', i) as string;
+			const operation = operations.find(op => op.name === operationName);
 
-				if (operation === 'listContainers') {
-					result = await listContainers(this, authToken, storageUrl, i);
-				} else if (operation === 'createContainer') {
-					result = await createContainer(this, authToken, storageUrl, i);
-				}
-
-				returnData.push({ json: result, pairedItem: { item: i } });
-			} catch (error) {
-				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
+			if (!operation) {
+				throw new Error(`Operation "${operationName}" not found`);
 			}
+
+			const result = await operation.execute.call(this, authToken, storageUrl, i);
+			returnData.push({ json: result });
 		}
 
 		return [returnData];
