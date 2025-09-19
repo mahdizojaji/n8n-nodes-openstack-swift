@@ -1,10 +1,13 @@
 import { IExecuteFunctions, INodeProperties } from 'n8n-workflow';
+import { SwiftOperation } from './swift.operation.base';
+import { OperationRegistry } from './swift.operation.registry';
 
-export const listContainersOperation = {
-	name: 'listContainers',
-	displayName: 'List Containers',
-	action: 'List all containers',
-	properties: [] as INodeProperties[],
+
+export class ListContainersOperation extends SwiftOperation {
+	name = 'listContainers';
+	displayName = 'List Containers';
+	action = 'List all containers';
+	properties: INodeProperties[] = [];
 
 	async execute(this: IExecuteFunctions, token: string, storageUrl: string, index: number): Promise<any> {
 		const response = await this.helpers.httpRequest({
@@ -16,4 +19,7 @@ export const listContainersOperation = {
 
 		return Array.isArray(response) ? { containers: response } : { data: response };
 	}
-};
+}
+
+
+OperationRegistry.register(new ListContainersOperation());

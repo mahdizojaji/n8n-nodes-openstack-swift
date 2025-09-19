@@ -3,31 +3,14 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	INodeProperties,
 	NodeOperationError,
 	NodeConnectionType,
 } from 'n8n-workflow';
+import { OperationRegistry } from './operations/swift.operation.registry';
 
-import { createContainerOperation } from './operations/createContainer.operation';
-import { listContainersOperation } from './operations/listContainers.operation';
+import './operations/createContainer.operation';
+import './operations/listContainers.operation';
 
-interface OperationDefinition {
-	name: string;
-	displayName: string;
-	action: string;
-	properties: INodeProperties[];
-	execute(
-		this: IExecuteFunctions,
-		token: string,
-		storageUrl: string,
-		index: number,
-	): Promise<any>;
-}
-
-const operations: OperationDefinition[] = [
-	listContainersOperation,
-	createContainerOperation,
-];
 
 export class OpenStackSwift implements INodeType {
 	description: INodeTypeDescription = {
@@ -37,7 +20,7 @@ export class OpenStackSwift implements INodeType {
 		group: ['transform'],
 		version: 1,
 		description: 'Interact with OpenStack Swift',
-		subtitle: '={{ $parameter["operation"] }}', // ✅ fix subtitle lint
+		subtitle: '={{ $parameter["operation"] }}',
 		defaults: { name: 'OpenStack Swift' },
 		inputs: ['main'] as NodeConnectionType[],
 		outputs: ['main'] as NodeConnectionType[],
@@ -48,23 +31,22 @@ export class OpenStackSwift implements INodeType {
 				name: 'operation',
 				type: 'options' as const,
 				noDataExpression: true,
-				options: operations.map((op) => ({
+				options: OperationRegistry.getAll().map(op => ({
 					name: op.displayName,
 					value: op.name,
 					action: op.action,
 				})),
-				default: operations[0].name,
+				default: OperationRegistry.getAll()[0].name,
 			},
-			...operations.flatMap((op) => op.properties || []),
+			...OperationRegistry.getAll().flatMap(op => op.properties || []),
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const credentials = (await this.getCredentials('openStackSwiftApi')) as {
+		const credentials = await this.getCredentials('openStackSwiftApi') as {
 			authToken?: string;
 			storageUrl?: string;
 		};
-
 		const { authToken, storageUrl } = credentials;
 
 		if (!authToken || !storageUrl) {
@@ -79,7 +61,7 @@ export class OpenStackSwift implements INodeType {
 
 		for (let i = 0; i < items.length; i++) {
 			const operationName = this.getNodeParameter('operation', i) as string;
-			const operation = operations.find((op) => op.name === operationName);
+			const operation = OperationRegistry.get(operationName);
 
 			if (!operation) {
 				throw new NodeOperationError(
@@ -94,7 +76,6 @@ export class OpenStackSwift implements INodeType {
 				storageUrl,
 				i,
 			);
-
 			returnData.push({ json: result });
 		}
 

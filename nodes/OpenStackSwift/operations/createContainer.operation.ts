@@ -1,10 +1,13 @@
 import { IExecuteFunctions, INodeProperties, NodeOperationError } from 'n8n-workflow';
+import { SwiftOperation } from './swift.operation.base';
+import { OperationRegistry } from './swift.operation.registry';
 
-export const createContainerOperation = {
-	name: 'createContainer',
-	displayName: 'Create Container',
-	action: 'Create a new container',
-	properties: [
+
+export class CreateContainerOperation extends SwiftOperation {
+	name = 'createContainer';
+	displayName = 'Create Container';
+	action = 'Create a new container';
+	properties: INodeProperties[] = [
 		{
 			displayName: 'Container Name',
 			name: 'containerName',
@@ -14,7 +17,7 @@ export const createContainerOperation = {
 				show: { operation: ['createContainer'] },
 			},
 		},
-	] as INodeProperties[],
+	];
 
 	async execute(this: IExecuteFunctions, token: string, storageUrl: string, index: number): Promise<any> {
 		const containerName = this.getNodeParameter('containerName', index) as string;
@@ -38,4 +41,6 @@ export const createContainerOperation = {
 
 		return { success: true, container: containerName, response };
 	}
-};
+}
+
+OperationRegistry.register(new CreateContainerOperation());
