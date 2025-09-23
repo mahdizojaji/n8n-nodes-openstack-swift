@@ -9,8 +9,6 @@
   "defaults": {
     "name": "OpenStack Swift"
   },
-  "inputs": ["main"],
-  "outputs": ["main"],
   "credentials": [
     {
       "name": "openStackSwiftApi",
@@ -18,60 +16,5 @@
     }
   ],
   "properties": [
-    {
-      "displayName": "Operation",
-      "name": "operation",
-      "type": "options",
-      "options": [
-        {
-          "name": "List Containers",
-          "value": "listContainers",
-          "description": "List all containers in Swift storage"
-        },
-        {
-          "name": "Create Container",
-          "value": "createContainer",
-          "description": "Create a new container in Swift storage"
-        }
-        ,
-        {
-          "name": "List Objects",
-          "value": "listObjects",
-          "description": "List all objects in a container"
-        }
-        ,
-        {
-          "name": "Delete Object",
-          "value": "deleteObject",
-          "description": "Delete an object from a container"
-        }
-        ,
-        {
-          "name": "Delete Container",
-          "value": "deleteContainer",
-          "description": "Delete a container"
-        }
-        ,
-        {
-          "name": "Create Object",
-          "value": "createObject",
-          "description": "Create an object in a container"
-        }
-      ],
-      "default": "listContainers",
-      "description": "The operation to perform."
-    },
-    {
-      "displayName": "Container Name",
-      "name": "containerName",
-      "type": "string",
-      "default": "",
-      "displayOptions": {
-        "show": {
-          "operation": ["createContainer", "listObjects"]
-        }
-      },
-      "description": "Name of the container to create"
-    }
   ]
 }
