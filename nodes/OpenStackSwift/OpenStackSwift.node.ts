@@ -13,6 +13,7 @@ import './operations/container/listContainers.operation';
 import './operations/container/deleteContainer.operation';
 import './operations/objects/listObjects.operation';
 import './operations/objects/deleteObject.operation';
+import './operations/objects/createObject.operation';
 
 
 export class OpenStackSwift implements INodeType {

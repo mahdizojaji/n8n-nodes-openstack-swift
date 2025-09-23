@@ -51,6 +51,12 @@
           "value": "deleteContainer",
           "description": "Delete a container"
         }
+        ,
+        {
+          "name": "Create Object",
+          "value": "createObject",
+          "description": "Create an object in a container"
+        }
       ],
       "default": "listContainers",
       "description": "The operation to perform."
