@@ -39,6 +39,7 @@ export class OpenStackSwift implements INodeType {
 					name: op.displayName,
 					value: op.name,
 					action: op.action,
+					group: [op.group],
 				})),
 				default: OperationRegistry.getAll()[0].name,
 			},

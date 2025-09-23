@@ -4,6 +4,7 @@ export abstract class SwiftOperation {
 	abstract name: string;
 	abstract displayName: string;
 	abstract action: string;
+	abstract group: string;
 	abstract properties: INodeProperties[];
 
 	abstract execute(

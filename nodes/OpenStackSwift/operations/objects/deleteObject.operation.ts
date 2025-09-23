@@ -6,6 +6,7 @@ export class DeleteObjectOperation extends SwiftOperation {
 	name = 'deleteObject';
 	displayName = 'Delete Object';
 	action = 'Delete an object from a container';
+	group = 'object';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Container Name',

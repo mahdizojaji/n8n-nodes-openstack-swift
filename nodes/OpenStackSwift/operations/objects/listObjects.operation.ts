@@ -6,6 +6,7 @@ export class ListObjectsOperation extends SwiftOperation {
 	name = 'listObjects';
 	displayName = 'List Objects';
 	action = 'List all objects in a container';
+	group = 'object';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Container Name',

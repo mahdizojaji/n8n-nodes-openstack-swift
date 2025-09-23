@@ -6,6 +6,7 @@ export class CreateContainerOperation extends SwiftOperation {
 	name = 'createContainer';
 	displayName = 'Create Container';
 	action = 'Create a new container';
+	group = 'container';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Container Name',

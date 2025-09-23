@@ -7,6 +7,7 @@ export class ListContainersOperation extends SwiftOperation {
 	name = 'listContainers';
 	displayName = 'List Containers';
 	action = 'List all containers';
+	group = 'container';
 	properties: INodeProperties[] = [];
 
 	async execute(this: IExecuteFunctions, token: string, storageUrl: string, index: number): Promise<any> {
