@@ -10,6 +10,7 @@ import { OperationRegistry } from './operations/swift.operation.registry';
 
 import './operations/createContainer.operation';
 import './operations/listContainers.operation';
+import './operations/listObjects.operation';
 
 
 export class OpenStackSwift implements INodeType {
@@ -37,6 +38,16 @@ export class OpenStackSwift implements INodeType {
 					action: op.action,
 				})),
 				default: OperationRegistry.getAll()[0].name,
+			},
+			{
+				displayName: 'Container Name',
+				name: 'containerName',
+				type: 'string' as const,
+				default: '',
+				required: true,
+				displayOptions: {
+					show: { operation: ['createContainer', 'listObjects'] },
+				},
 			},
 			...OperationRegistry.getAll().flatMap(op => op.properties || []),
 		],

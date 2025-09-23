@@ -33,6 +33,12 @@
           "value": "createContainer",
           "description": "Create a new container in Swift storage"
         }
+        ,
+        {
+          "name": "List Objects",
+          "value": "listObjects",
+          "description": "List all objects in a container"
+        }
       ],
       "default": "listContainers",
       "description": "The operation to perform."
@@ -44,7 +50,7 @@
       "default": "",
       "displayOptions": {
         "show": {
-          "operation": ["createContainer"]
+          "operation": ["createContainer", "listObjects"]
         }
       },
       "description": "Name of the container to create"

@@ -7,15 +7,6 @@ export class CreateContainerOperation extends SwiftOperation {
 	displayName = 'Create Container';
 	action = 'Create a new container';
 	properties: INodeProperties[] = [
-		{
-			displayName: 'Container Name',
-			name: 'containerName',
-			type: 'string' as const,
-			default: '',
-			displayOptions: {
-				show: { operation: ['createContainer'] },
-			},
-		},
 	];
 
 	async execute(this: IExecuteFunctions, token: string, storageUrl: string, index: number): Promise<any> {
