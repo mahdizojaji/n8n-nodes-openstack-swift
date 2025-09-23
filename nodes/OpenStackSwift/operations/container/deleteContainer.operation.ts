@@ -32,4 +32,3 @@ export class DeleteContainerOperation extends SwiftOperation {
 }
 
 OperationRegistry.register(new DeleteContainerOperation());
-console.log('test')
