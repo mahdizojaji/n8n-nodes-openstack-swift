@@ -10,6 +10,7 @@ import {OperationRegistry} from './operations/swift.operation.registry';
 
 import './operations/container/createContainer.operation';
 import './operations/container/listContainers.operation';
+import './operations/container/deleteContainer.operation';
 import './operations/objects/listObjects.operation';
 import './operations/objects/deleteObject.operation';
 
