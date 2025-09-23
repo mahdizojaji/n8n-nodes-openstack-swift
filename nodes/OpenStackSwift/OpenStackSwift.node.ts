@@ -8,10 +8,10 @@ import {
 } from 'n8n-workflow';
 import {OperationRegistry} from './operations/swift.operation.registry';
 
-import './operations/createContainer.operation';
-import './operations/listContainers.operation';
-import './operations/listObjects.operation';
-import './operations/deleteObject.operation';
+import './operations/container/createContainer.operation';
+import './operations/container/listContainers.operation';
+import './operations/objects/listObjects.operation';
+import './operations/objects/deleteObject.operation';
 
 
 export class OpenStackSwift implements INodeType {

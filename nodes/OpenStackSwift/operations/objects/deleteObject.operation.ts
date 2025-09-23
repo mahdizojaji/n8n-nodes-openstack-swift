@@ -1,6 +1,6 @@
 import {IExecuteFunctions, INodeProperties} from 'n8n-workflow';
-import {SwiftOperation} from './swift.operation.base';
-import {OperationRegistry} from './swift.operation.registry';
+import {SwiftOperation} from '../swift.operation.base';
+import {OperationRegistry} from '../swift.operation.registry';
 
 export class DeleteObjectOperation extends SwiftOperation {
 	name = 'deleteObject';
