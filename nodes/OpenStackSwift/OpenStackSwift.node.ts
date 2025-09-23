@@ -3,10 +3,10 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeOperationError,
 	NodeConnectionType,
+	NodeOperationError,
 } from 'n8n-workflow';
-import { OperationRegistry } from './operations/swift.operation.registry';
+import {OperationRegistry} from './operations/swift.operation.registry';
 
 import './operations/createContainer.operation';
 import './operations/listContainers.operation';
@@ -23,10 +23,10 @@ export class OpenStackSwift implements INodeType {
 		version: 1,
 		description: 'Interact with OpenStack Swift',
 		subtitle: '={{ $parameter["operation"] }}',
-		defaults: { name: 'OpenStack Swift' },
+		defaults: {name: 'OpenStack Swift'},
 		inputs: ['main'] as NodeConnectionType[],
 		outputs: ['main'] as NodeConnectionType[],
-		credentials: [{ name: 'openStackSwiftApi', required: true }],
+		credentials: [{name: 'openStackSwiftApi', required: true}],
 		properties: [
 			{
 				displayName: 'Operation',
@@ -40,17 +40,15 @@ export class OpenStackSwift implements INodeType {
 				})),
 				default: OperationRegistry.getAll()[0].name,
 			},
-			{
-				displayName: 'Container Name',
-				name: 'containerName',
-				type: 'string' as const,
-				default: '',
-				required: true,
-				displayOptions: {
-					show: { operation: ['createContainer', 'listObjects'] },
-				},
-			},
-			...OperationRegistry.getAll().flatMap(op => op.properties || []),
+			...OperationRegistry.getAll().flatMap(op =>
+				op.properties
+					? op.properties.map(prop => ({
+						...prop, displayOptions: {
+							show: {operation: [op.name]},
+						},
+					}))
+					: []
+			),
 		],
 	};
 
@@ -59,7 +57,7 @@ export class OpenStackSwift implements INodeType {
 			authToken?: string;
 			storageUrl?: string;
 		};
-		const { authToken, storageUrl } = credentials;
+		const {authToken, storageUrl} = credentials;
 
 		if (!authToken || !storageUrl) {
 			throw new NodeOperationError(
@@ -88,7 +86,7 @@ export class OpenStackSwift implements INodeType {
 				storageUrl,
 				i,
 			);
-			returnData.push({ json: result });
+			returnData.push({json: result});
 		}
 
 		return [returnData];

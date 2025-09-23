@@ -9,13 +9,10 @@ export class DeleteObjectOperation extends SwiftOperation {
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Container Name',
-			name: 'container',
-			type: 'string',
+			name: 'containerName',
+			type: 'string' as const,
 			default: '',
 			required: true,
-			displayOptions: {
-				show: {operation: ['deleteObject']},
-			},
 		},
 		{
 			displayName: 'Object Name',
@@ -23,14 +20,11 @@ export class DeleteObjectOperation extends SwiftOperation {
 			type: 'string',
 			default: '',
 			required: true,
-			displayOptions: {
-				show: {operation: ['deleteObject']},
-			},
 		},
 	];
 
 	async execute(this: IExecuteFunctions, token: string, storageUrl: string, index: number): Promise<any> {
-		const container = this.getNodeParameter('container', index) as string;
+		const container = this.getNodeParameter('containerName', index) as string;
 		const objectName = this.getNodeParameter('objectName', index) as string;
 		const url = `${storageUrl}/${container}/${objectName}`;
 		const response = await this.helpers.httpRequest({
