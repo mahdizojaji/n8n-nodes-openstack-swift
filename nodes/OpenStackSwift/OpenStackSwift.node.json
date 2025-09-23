@@ -39,6 +39,12 @@
           "value": "listObjects",
           "description": "List all objects in a container"
         }
+        ,
+        {
+          "name": "Delete Object",
+          "value": "deleteObject",
+          "description": "Delete an object from a container"
+        }
       ],
       "default": "listContainers",
       "description": "The operation to perform."

@@ -11,6 +11,7 @@ import { OperationRegistry } from './operations/swift.operation.registry';
 import './operations/createContainer.operation';
 import './operations/listContainers.operation';
 import './operations/listObjects.operation';
+import './operations/deleteObject.operation';
 
 
 export class OpenStackSwift implements INodeType {
