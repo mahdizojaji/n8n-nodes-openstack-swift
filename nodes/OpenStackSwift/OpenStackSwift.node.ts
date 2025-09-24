@@ -36,10 +36,10 @@ export class OpenStackSwift implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{
-						name: 'Container',
-						value: 'container',
-					},
+					...Object.entries(OperationRegistry.groupBy()).map(([groupName, _]) => ({
+						name: groupName,
+						value: groupName
+					}))
 				],
 				default: 'container',
 			},
