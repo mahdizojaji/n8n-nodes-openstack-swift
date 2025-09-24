@@ -60,7 +60,6 @@ export class GetObjectOperation extends SwiftOperation {
 
 			return [
 				{
-					json: {},
 					binary: {
 						[outputBinaryPropertyName]: {
 							data: base64Data,
