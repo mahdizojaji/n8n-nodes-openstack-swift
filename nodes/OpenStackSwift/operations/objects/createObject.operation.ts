@@ -83,9 +83,8 @@ export class CreateObjectOperation extends SwiftOperation {
 			const binaryPropertyName = this.getNodeParameter('binaryPropertyName', index) as string;
 
 			// مسیر اول: دریافت مستقیم Buffer
-			let binaryData = this.helpers.getBinaryDataBuffer(index, binaryPropertyName);
+			let binaryData = await this.helpers.getBinaryDataBuffer(index, binaryPropertyName);
 
-			// مسیر دوم: ساخت دستی Buffer از base64 اگر مسیر اول شکست خورد
 			if (!Buffer.isBuffer(binaryData)) {
 				const rawBinary = this.getInputData(index).binary?.[binaryPropertyName];
 				if (!rawBinary) {
@@ -93,6 +92,7 @@ export class CreateObjectOperation extends SwiftOperation {
 				}
 				binaryData = Buffer.from(rawBinary.data, 'base64');
 			}
+
 			body = binaryData;
 		} else {
 			throw new Error(`Unsupported fileType: ${fileType}`);
