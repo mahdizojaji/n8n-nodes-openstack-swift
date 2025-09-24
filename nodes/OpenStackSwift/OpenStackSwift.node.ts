@@ -30,32 +30,23 @@ export class OpenStackSwift implements INodeType {
 		outputs: ['main'] as NodeConnectionType[],
 		credentials: [{name: 'openStackSwiftApi', required: true}],
 		properties: [
-			{
+			...Object.entries(OperationRegistry.groupBy()).map(([groupName, ops]) => ({
 				displayName: 'Operation',
 				name: 'operation',
 				type: 'options' as const,
 				noDataExpression: true,
-				options: Object.entries(
-					OperationRegistry.getAll().reduce((acc, op) => {
-						(acc[op.group] ||= []).push({
-							name: op.displayName,
-							value: op.name,
-							action: op.action,
-						});
-						return acc;
-					}, {} as Record<string, { name: string; value: string; action: string }[]>)
-				).flatMap(([groupName, ops]) => {
-					return [
-						{
-							name: `--- ${groupName.toUpperCase()} ---`,
-							value: '',
-							disabled: true,
-						},
-						...ops,
-					];
-				}),
-				default: OperationRegistry.getAll()[0].name,
-			},
+				displayOptions: {
+					show: {
+						resource: [groupName],
+					},
+				},
+				options: ops.map(op => ({
+					name: op.displayName,
+					value: op.name,
+					action: op.action,
+				})),
+				default: ops[0].name,
+			})),
 			...OperationRegistry.getAll().flatMap(op =>
 				op.properties
 					? op.properties.map(prop => ({

@@ -14,6 +14,18 @@ class OperationRegistry {
 	static getAll(): SwiftOperation[] {
 		return Array.from(this.operations.values());
 	}
+
+	static groupBy(): Record<string, SwiftOperation[]> {
+		return Array.from(this.operations.values()).reduce((acc, op) => {
+			const groupName = op.group;
+			if (!acc[groupName]) {
+				acc[groupName] = [];
+			}
+			acc[groupName].push(op);
+			return acc;
+		}, {} as Record<string, SwiftOperation[]>);
+	}
+
 }
 
 export { OperationRegistry };
