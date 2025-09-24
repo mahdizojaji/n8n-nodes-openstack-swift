@@ -1,6 +1,6 @@
-import {IExecuteFunctions, INodeProperties} from 'n8n-workflow';
-import {SwiftOperation} from '../swift.operation.base';
-import {OperationRegistry} from '../swift.operation.registry';
+import { IExecuteFunctions, INodeProperties } from 'n8n-workflow';
+import { SwiftOperation } from '../swift.operation.base';
+import { OperationRegistry } from '../swift.operation.registry';
 
 export class CreateObjectOperation extends SwiftOperation {
 	name = 'createObject';
@@ -28,8 +28,8 @@ export class CreateObjectOperation extends SwiftOperation {
 			name: 'fileType',
 			type: 'options',
 			options: [
-				{name: 'Text', value: 'text'},
-				{name: 'Binary', value: 'binary'},
+				{ name: 'Text', value: 'text' },
+				{ name: 'Binary', value: 'binary' },
 			],
 			default: 'text',
 			required: true,
@@ -41,9 +41,7 @@ export class CreateObjectOperation extends SwiftOperation {
 			default: '',
 			required: true,
 			displayOptions: {
-				show: {
-					fileType: ['text'],
-				},
+				show: { fileType: ['text'] },
 			},
 		},
 		{
@@ -53,9 +51,7 @@ export class CreateObjectOperation extends SwiftOperation {
 			default: 'data',
 			required: true,
 			displayOptions: {
-				show: {
-					fileType: ['binary'],
-				},
+				show: { fileType: ['binary'] },
 			},
 			description: 'Name of the binary property containing the file data',
 		},
@@ -85,10 +81,17 @@ export class CreateObjectOperation extends SwiftOperation {
 			body = this.getNodeParameter('contentText', index) as string;
 		} else if (fileType === 'binary') {
 			const binaryPropertyName = this.getNodeParameter('binaryPropertyName', index) as string;
-			const binaryData = this.helpers.getBinaryDataBuffer(index, binaryPropertyName);
 
+			// مسیر اول: دریافت مستقیم Buffer
+			let binaryData = this.helpers.getBinaryDataBuffer(index, binaryPropertyName);
+
+			// مسیر دوم: ساخت دستی Buffer از base64 اگر مسیر اول شکست خورد
 			if (!Buffer.isBuffer(binaryData)) {
-				throw new Error('Binary data must be a valid Buffer');
+				const rawBinary = this.getInputData(index).binary?.[binaryPropertyName];
+				if (!rawBinary) {
+					throw new Error(`Binary property "${binaryPropertyName}" not found in input`);
+				}
+				binaryData = Buffer.from(rawBinary.data, 'base64');
 			}
 			body = binaryData;
 		} else {
@@ -106,7 +109,7 @@ export class CreateObjectOperation extends SwiftOperation {
 			ignoreHttpStatusErrors: false,
 		});
 
-		return {success: true, response};
+		return { success: true, response };
 	}
 }
 
