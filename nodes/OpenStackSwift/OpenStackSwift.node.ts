@@ -30,6 +30,19 @@ export class OpenStackSwift implements INodeType {
 		outputs: ['main'] as NodeConnectionType[],
 		credentials: [{name: 'openStackSwiftApi', required: true}],
 		properties: [
+			{
+				displayName: 'Resource',
+				name: 'resource',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Container',
+						value: 'container',
+					},
+				],
+				default: 'message',
+			},
 			...Object.entries(OperationRegistry.groupBy()).map(([groupName, ops]) => ({
 				displayName: 'Operation',
 				name: 'operation',
