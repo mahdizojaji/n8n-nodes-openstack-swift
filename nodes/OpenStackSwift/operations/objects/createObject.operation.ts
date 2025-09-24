@@ -57,7 +57,7 @@ export class CreateObjectOperation extends SwiftOperation {
 					fileType: ['binary'],
 				},
 			},
-			description: 'Name of the binary property containing the file data.',
+			description: 'Name of the binary property containing the file data',
 		},
 		{
 			displayName: 'Content Type',
