@@ -41,7 +41,7 @@ export class OpenStackSwift implements INodeType {
 						value: groupName
 					}))
 				],
-				default: 'container',
+				default: '',
 			},
 			...Object.entries(OperationRegistry.groupBy()).map(([groupName, ops]) => ({
 				displayName: 'Operation',
