@@ -6,7 +6,7 @@ export class GetObjectOperation extends SwiftOperation {
     name = 'getObject';
     displayName = 'Get Object';
     action = 'Get an object from a container';
-    group = 'objects';
+    group = 'object';
     properties: INodeProperties[] = [
         {
             displayName: 'Container Name',
