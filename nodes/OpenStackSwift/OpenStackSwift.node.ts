@@ -64,12 +64,17 @@ export class OpenStackSwift implements INodeType {
 			...OperationRegistry.getAll().flatMap(op =>
 				op.properties
 					? op.properties.map(prop => ({
-						...prop, displayOptions: {
-							show: {operation: [op.name]},
+						...prop,
+						displayOptions: {
+							show: {
+								...(prop.displayOptions?.show ?? {}),
+								operation: [op.name],
+							},
 						},
 					}))
 					: []
-			),
+			)
+
 		],
 	};
 
