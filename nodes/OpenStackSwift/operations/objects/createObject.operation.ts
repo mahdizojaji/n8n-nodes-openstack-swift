@@ -86,7 +86,8 @@ export class CreateObjectOperation extends SwiftOperation {
 			let binaryData = await this.helpers.getBinaryDataBuffer(index, binaryPropertyName);
 
 			if (!Buffer.isBuffer(binaryData)) {
-				const rawBinary = this.getInputData(index).binary?.[binaryPropertyName];
+				const item = this.getInputData(index)[0];
+				const rawBinary = item.binary?.[binaryPropertyName];
 				if (!rawBinary) {
 					throw new Error(`Binary property "${binaryPropertyName}" not found in input`);
 				}
